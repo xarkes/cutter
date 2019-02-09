@@ -160,7 +160,7 @@ private:
     int scroll_base_x = 0;
     int scroll_base_y = 0;
     bool scroll_mode = false;
-
+    int exceedSize = 2500;
 
     // Todo: remove charheight/charwidth cause it should be handled in child class
     qreal charWidth = 10.0;

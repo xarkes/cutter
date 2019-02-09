@@ -109,8 +109,8 @@ void GraphView::adjustSize(int new_width, int new_height, QPoint mouse)
 {
     int originalRangeX = horizontalScrollBar()->maximum();
     int originalRangeY = verticalScrollBar()->maximum();
-    int newMaxX = width - (new_width / current_scale);
-    int newMaxY = height - (new_height / current_scale);
+    int newMaxX = width - (new_width / current_scale) + exceedSize * 2;
+    int newMaxY = height - (new_height / current_scale) + exceedSize * 2;
 
     // Update scroll bar information
     horizontalScrollBar()->setPageStep(new_width);
@@ -418,6 +418,7 @@ void GraphView::paintEvent(QPaintEvent *event)
     int render_offset_y = -verticalScrollBar()->value() * current_scale;
     int render_width = viewport()->size().width();
     int render_height = viewport()->size().height();
+    qDebug() << "Painting...";
 
     // Do we have scrollbars?
     bool hscrollbar = horizontalScrollBar()->pageStep() < width * current_scale;
@@ -435,11 +436,11 @@ void GraphView::paintEvent(QPaintEvent *event)
     // We do not have a scrollbar on this axis, so we center the view
     if (!hscrollbar) {
         unscrolled_render_offset_x = (viewport()->size().width() - (width * current_scale)) / 2;
-        render_offset_x += unscrolled_render_offset_x;
+        render_offset_x += unscrolled_render_offset_x + exceedSize;
     }
     if (!vscrollbar) {
         unscrolled_render_offset_y = (viewport()->size().height() - (height * current_scale)) / 2;
-        render_offset_y += unscrolled_render_offset_y;
+        render_offset_y += unscrolled_render_offset_y + exceedSize;
     }
 
     p.translate(render_offset_x, render_offset_y);
@@ -920,6 +921,7 @@ void GraphView::wheelEvent(QWheelEvent *event)
     const QPoint delta = -event->angleDelta();
     int x_delta = delta.x();
     int y_delta = delta.y();
+    qDebug() << "Going to " << x_delta << " " << y_delta;
     horizontalScrollBar()->setValue(horizontalScrollBar()->value() + x_delta * (1 / current_scale));
     verticalScrollBar()->setValue(verticalScrollBar()->value() + y_delta * (1 / current_scale));
     event->accept();
